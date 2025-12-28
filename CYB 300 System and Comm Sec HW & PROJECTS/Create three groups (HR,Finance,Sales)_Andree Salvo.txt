@@ -1,0 +1,34 @@
+#!/bin/bash
+# Name: Andree Salvo
+# Date: 08/03/2025
+# Course: CYB 300
+# Creating 12 Users, assigning them to specific groups, and setting a new password 
+
+PASSWORD="NewP@$$w0rd"
+
+for USER in bob1 cat2 jason3 joe4 ray5 eli6 ben7 leo8 mia9 joy10 alex11 sky12
+do
+
+	if [[ "$USER" == "bob1" || "$USER" == "cat2" || "$USER" == "jason3" || "$USER" == "joe4" ]]; then
+		GROUP="HR"
+	elif [[ "$USER" == "ray5" || "$USER" == "eli6" || "$USER" == "ben7" || "$USER" == "leo8" ]]; then
+		GROUP="Fiance"
+	else
+		GROUP="SALES"
+	fi
+	
+	# Checking for groups that might created already, if not create them
+	if ! grep -q "^$GROUP:" /etc/group; then
+		groupadd "$GROUP"
+		echo "Group $GROUP created"
+	fi
+	
+	if useradd -m -g "$GROUP" "$USER"; then
+	
+		echo "$USER:$PASSWORD" | chpasswd
+		
+		echo "User $USER created and added to group $GROUP."
+	else
+		echo "Failed to create user $USER"
+	fi
+done

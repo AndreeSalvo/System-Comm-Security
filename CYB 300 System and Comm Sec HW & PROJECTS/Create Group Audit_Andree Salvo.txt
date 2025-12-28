@@ -1,0 +1,26 @@
+#!/bin/bash
+# Name: Andree Salvo
+# Date: 08/03/2025
+# Course: CYB 300
+# Adds all HR and Finance users to the Audit group
+
+audit_group="Audit"
+
+# Creating the Audit group if it doesn't already exist!
+
+if ! getent group "$audit_group" > /dev/null; then
+	sudo groupadd "$audit_group"
+	echo "Group $audit_group created."
+fi
+
+# Goes through each user on the system!
+
+for user in $(cut -d: -f1 /etc/passwd); do
+
+# Checking if the user is in HR or Finance or not!
+
+if id -nG "$user" | grep -qw "HR" || id -nG "$user" || grep -qw "Finance"; then
+	sudo usermod -aG "$audit_group "$user"
+	echo "User $user added to $audit_group."
+fi
+done
